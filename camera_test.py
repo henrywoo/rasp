@@ -42,7 +42,8 @@ with torch.no_grad():
 
         cv2.putText(image, f"FPS:{fps}", (40, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 1)
         cv2.imshow("web camera v1.0", image)
-        cv2.waitKey(1)
+        if (cv2.waitKey(1) & 0xFF) == ord('c'):
+            break
 
         # convert opencv output from BGR to RGB
         image = image[:, :, [2, 1, 0]]
@@ -57,3 +58,7 @@ with torch.no_grad():
         output = net(input_batch)
         # do something with output ...
 
+
+
+cap.release()
+cv2.destroyAllWindows()
