@@ -1,11 +1,7 @@
-import time
-
-import torch
-import numpy as np
-from torchvision import models, transforms
-
 import cv2
-from PIL import Image
+import time
+import torch
+from torchvision import models, transforms
 
 torch.backends.quantized.engine = 'qnnpack'
 
@@ -24,8 +20,8 @@ net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
 # jit model to take it from ~20fps to ~30fps
 net = torch.jit.script(net)
 
-started = time.time()
-last_logged = time.time()
+started = time.monotonic()
+last_logged = time.monotonic()
 frame_count = 0
 
 fps = 0
@@ -38,20 +34,19 @@ with torch.no_grad():
 
         # log model performance
         frame_count += 1
-        now = time.time()
+        now = time.monotonic()
         if now - last_logged > 1:
             fps = frame_count / (now-last_logged)
             print(f"{fps} fps")
             last_logged = now
             frame_count = 0
 
-        cv2.putText(image, f"FPS:{fps}", (40, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 3)
-        cv2.imshow("img", image)
+        cv2.putText(image, f"FPS:{fps}", (40, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0), 1)
+        cv2.imshow("web camera v1.0", image)
         cv2.waitKey(1)
 
         # convert opencv output from BGR to RGB
         image = image[:, :, [2, 1, 0]]
-        permuted = image
 
         # preprocess
         input_tensor = preprocess(image)
