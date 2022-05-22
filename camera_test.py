@@ -5,11 +5,10 @@ from torchvision import models, transforms
 
 torch.backends.quantized.engine = 'qnnpack'
 
-#cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 224)
-cap.set(cv2.CAP_PROP_FPS, 36)
+cap.set(cv2.CAP_PROP_FPS, 18)
 
 preprocess = transforms.Compose([
     transforms.ToTensor(),
@@ -19,6 +18,7 @@ preprocess = transforms.Compose([
 net = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
 # jit model to take it from ~20fps to ~30fps
 net = torch.jit.script(net)
+net.eval()
 
 started = time.monotonic()
 last_logged = time.monotonic()
@@ -27,7 +27,6 @@ frame_count = 0
 fps = 0
 with torch.no_grad():
     while True:
-        # read frame
         ret, image = cap.read()
         if not ret:
             raise RuntimeError("failed to read frame")
