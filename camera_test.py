@@ -5,7 +5,7 @@ from torchvision import models, transforms
 
 torch.backends.quantized.engine = 'qnnpack'
 
-cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+cap = cv2.VideoCapture(2, cv2.CAP_V4L2)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 224)
 cap.set(cv2.CAP_PROP_FPS, 18)
